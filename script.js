@@ -1,37 +1,47 @@
-// Items do DOM
+// »»»»»»»»»»»»»»»»»»»»» Criando as Variavéis «««««««««««««««««««««««
 
 // contador de itens
 
 let count = 0;
 
-// selecionando os quatro inputs
+// Array dos elementos
+let arrayItems = [];
+
+// »»»»»»»»»»»»»»»»»»»»» Selecionando Componentes do DOM «««««««««««««««««««««««
+
+// Inputs
 const inputNome = document.getElementById("nome");
 const inputPrimeiro = document.getElementById("primeiro");
 const inputSegundo = document.getElementById("segundo");
 const inputResultado = document.getElementById("resultado");
 
-// limpando tudo no reload
+//     -   Botões
+const button = document.getElementById("add");
+const verify = document.getElementById("verify");
+
+//     -   Div que vai receber os items
+const items = document.getElementById("items");
+
+// »»»»»»»»»»»»»»»»»»» Definindo os Status Iniciais dos Elementos ««««««««««««««««««««««««««
+
+// Inputs vazios quando a página carregar
 
 inputNome.value = "";
 inputPrimeiro.value = "";
 inputSegundo.value = "";
 inputResultado.value = "";
 
-// botões de ações selecionados
-const button = document.getElementById("add");
-const verify = document.getElementById("verify");
-
-// desabilitando o input resultado para não poder ser editado
+// desabilitando o input resultado para este não poder ser editado
 
 inputResultado.disabled = true;
 
-// div onde vai ficar os campos selecionado
-const items = document.getElementById("items");
+//     -   desabilitando o botão de adicionar
 
-// Array dos elementos
-const arrayItems = [];
+button.disabled = true;
 
-// função pra verificar se os inputs de números estão preenchidos
+// »»»»»»»»»»»»»»»»»»» Funções que fazem verificações ««««««««««««««««««««««««««
+
+//     -   função pra verificar se os inputs de números estão preenchidos
 
 function verificaNumbers() {
   if (inputPrimeiro.value > 0 && inputSegundo.value > 0) {
@@ -42,7 +52,7 @@ function verificaNumbers() {
   }
 }
 
-// função pra verificar se existe um nome preenchido
+//     -   função pra verificar se existe um nome preenchido
 
 function verificaNome() {
   if (inputNome.value) {
@@ -52,42 +62,16 @@ function verificaNome() {
   }
 }
 
-// função para calcular e adicionar o valor no input resultado
+// »»»»»»»»»»»»»»»»»»» Funções que fazem tarefas ««««««««««««««««««««««««««
 
-function calcular(a, b) {
+//     -   função para calcular e adicionar o valor no input resultado
+
+function calcular(primeiroValor, segundoValor) {
   // colocando o resultado no input
-  return (inputResultado.value = parseInt(a) * parseInt(b));
+  return (inputResultado.value = parseInt(primeiroValor) * parseInt(segundoValor));
 }
 
-// Adicionando o evento de watch aos dois inputs ao mesmo tempo usando um array
-// esse event listener vai ser ativado sempre que o input for alterado
-// se um dos campos estiver vazio vai limpar o resultado
-
-[inputPrimeiro, inputSegundo].forEach((input) => {
-  input.addEventListener("input", () => {
-    if (verificaNumbers()) {
-      // se os dois campos estiverem preenchidos vai calcular
-      calcular(inputPrimeiro.value, inputSegundo.value);
-    }
-  });
-});
-
-// adicionando watcher nos inputs de nome e resultado, sempre que o nome e resultado forem alterados
-// vai ser se nome e resultado estão preenchidos, se estiverem vai habilitar o botão
-
-button.disabled = true;
-
-[inputNome, inputPrimeiro, inputSegundo, inputResultado].forEach((input) => {
-  input.addEventListener("keyup", () => {
-    if (inputNome.value !== "" && inputResultado.value > 0) {
-      button.disabled = false;
-    } else {
-      button.disabled = true;
-    }
-  });
-});
-
-// criando o objeto que vai ser adicionado ao array
+//     -   para criar o objeto que vai ser adicionado ao array
 
 function createObject() {
   return {
@@ -95,58 +79,51 @@ function createObject() {
     primeiro: inputPrimeiro.value,
     segundo: inputSegundo.value,
     resultado: inputResultado.value,
+    position: count,
   };
 }
 
-// função para adicionar o objeto ao array
+//     -   função para adicionar o objeto ao array
 
 function addToArray() {
   arrayItems.push(createObject());
 }
 
-// função para limpar os inputs
+//     -   função para limpar os inputs
 
 function clearInputs() {
   inputNome.value = "";
-  inputPrimeiro.value = "";
-  inputSegundo.value = "";
-  inputResultado.value = "";
+  inputPrimeiro.value = 0;
+  inputSegundo.value = 0;
+  inputResultado.value = 0;
 }
 
-// função para remover o elemento da div
+//     -   função para remover o elemento da div
 
-function removeElement(index) {
-  const element = document.querySelector(`[index="${index}"]`);
+function removeElement(itemPos) {
+  // selecionando o elemento que vai ser removido
+  const element = document.querySelector(`[position="${itemPos}"]`);
   element.remove();
 }
 
-// função para remover o objeto do array
+//     -   função para remover o objeto do array
 
-function removeFromArray(index) {
-  arrayItems.splice(index, 1);
+function removeFromArray(pos) {
+  // filtrando o array e removendo o objeto que tem a mesma posição do elemento que foi removido
+  arrayItems = arrayItems.filter((itemDoArray) => itemDoArray.position !== parseInt(pos));
 }
 
-// adicionando o evento de click no botão remover
-
-items.addEventListener("click", (e) => {
-  if (e.target.classList.contains("remove")) {
-    const index = e.target.getAttribute("index");
-    removeElement(index);
-    removeFromArray(index);
-  }
-});
-
-// função para criar o elemento que vai ser adicionado na div
+//     -   função para criar o elemento que vai ser adicionado na div
 
 function createElement() {
   const div = document.createElement("div");
   div.classList.add("item");
-  div.innerHTML = `<div class="itemBox" index=${count}>
+  div.innerHTML = `<div class="itemBox" position=${count}>
     <p>Nome: ${inputNome.value}</p>
     <p>Primeiro: ${inputPrimeiro.value}</p>
     <p>Segundo: ${inputSegundo.value}</p>
     <p>Resultado: ${inputResultado.value}</p>
-    <button class="remove" index=${count}>Remover</button>
+    <button class="remove" remove=${count}>Remover</button>
     </div>
   `;
   count++;
@@ -159,19 +136,63 @@ function addElement() {
   items.appendChild(createElement());
 }
 
-// função para adicionar o objeto ao array e adicionar o elemento na div
+// função para adicionar o objeto ao array, adicionar o elemento à div e limpar os inputs
 
-function add() {
+async function add() {
   addToArray();
   addElement();
   clearInputs();
 }
+
+// »»»»»»»»»»»»»»»»»»» EventListeners (Watchers) ««««««««««««««««««««««««««
+
+// Adicionando o evento de watch aos dois inputs ao mesmo tempo usando um array
+// esse event listener vai ser ativado sempre que o input for alterado
+// se um dos campos estiver vazio vai limpar o resultado
+
+[inputPrimeiro, inputSegundo].forEach((input) => {
+  input.addEventListener("keyup", () => {
+    if (verificaNumbers()) {
+      // se os dois campos estiverem preenchidos vai calcular
+      calcular(inputPrimeiro.value, inputSegundo.value);
+    }
+  });
+});
+
+// adicionando watcher nos inputs, sempre que eles forem alterados
+// vai ser verificado se nome e resultado estão preenchidos, se estiverem vai habilitar o botão
+
+[inputNome, inputPrimeiro, inputSegundo, inputResultado].forEach((input) => {
+  // aqui foi usado keyup, pois é preciso verificar sempre se existe um nome e um resultado
+  input.addEventListener("keyup", () => {
+    if (inputNome.value !== "" && inputResultado.value > 0) {
+      //se  existe um nome e um resultado vai habilitar o botão
+      button.disabled = false;
+    } else {
+      // se não existe vai desabilitar
+      button.disabled = true;
+    }
+  });
+});
+
+// adicionando o evento de click no botão remover de cada item criado
+
+items.addEventListener("click", (e) => {
+  if (e.target.classList.contains("remove")) {
+    // os botões de remover foram criados com a tag remove, se o objeto clicado tiver essa tag vai retornar true
+    const removeItem = e.target.getAttribute("remove");
+    removeElement(removeItem);
+    removeFromArray(removeItem);
+  }
+});
 
 // adicionando o evento de click no botão
 
 button.addEventListener("click", () => {
   add();
 });
+
+// »»»»»»»»»»»»»»»»»»» Testador ««««««««««««««««««««««««««
 
 // Tabela pra verificar valores
 
