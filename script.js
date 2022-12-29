@@ -146,7 +146,7 @@ const popularArrayParaPHP = () => {
   arrayItems.forEach((item) => {
     objectToPHP += JSON.stringify(item) + ", ";
   });
-  objectToPHP = objectToPHP.slice(0, -1);
+  objectToPHP = objectToPHP.slice(0, objectToPHP.length - 1);
   medicoesArray.name = nomedocampo + "[" + objectToPHP + "]";
 };
 
