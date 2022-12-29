@@ -14,6 +14,7 @@ const inputNome = document.getElementById("nome");
 const inputPrimeiro = document.getElementById("primeiro");
 const inputSegundo = document.getElementById("segundo");
 const inputResultado = document.getElementById("resultado");
+const medicoesArray = document.getElementById("medicoes_previstas");
 
 //     -   Botões
 const button = document.getElementById("add");
@@ -136,11 +137,25 @@ function addElement() {
   items.appendChild(createElement());
 }
 
+//  função para converter o array em um objeto para ser enviado ao PHP
+
+const popularArrayParaPHP = () => {
+  let nomedocampo = medicoesArray.id;
+  let objectToPHP = "";
+
+  arrayItems.forEach((item) => {
+    objectToPHP += JSON.stringify(item) + ", ";
+  });
+  objectToPHP = objectToPHP.slice(0, -1);
+  medicoesArray.name = nomedocampo + "[" + objectToPHP + "]";
+};
+
 // função para adicionar o objeto ao array, adicionar o elemento à div e limpar os inputs
 
 async function add() {
   addToArray();
   addElement();
+  popularArrayParaPHP();
   clearInputs();
 }
 
@@ -206,3 +221,7 @@ verify.addEventListener("click", () => {
   });
   console.table(arrayItems);
 });
+
+///
+
+///
